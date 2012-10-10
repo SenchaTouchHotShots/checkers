@@ -8,5 +8,4 @@ Ext.define('Checkers.model.Square', {
         ],
         idProperty: 'squareID'
     }
-
 });
