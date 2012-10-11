@@ -11,7 +11,7 @@ Ext.define('Checkers.view.Main', {
             {
                 xtype: 'dataview',
                 itemTpl: ['<div class="gameSquare {background} {decoration}">{squareID}',
-                          "<tpl if='occupiedBy != \"none\"'><img src=\"/resources/images/{occupiedBy}{pieceType}.png\" height=\"72\" width=\"72\" /></tpl>",
+                          "<tpl if='occupiedBy != \"none\" && pieceType != \"none\"'><img src=\"/resources/images/{occupiedBy}{pieceType}.png\" height=\"72\" width=\"72\" /></tpl>",
                           '</div>'],
                 store: 'BoardStore',
                 height: 619,

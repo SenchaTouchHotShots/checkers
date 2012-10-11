@@ -25,13 +25,14 @@ Ext.define('Checkers.controller.Game', {
             removedPieces: []
         },
         currentTurn: {
-            player: 'red',
+            player: 'black',
             piece: null,
             moves: [],
             removedPieces: [],
             endOfTurn: false,
             hasJumped: false,
-            started: false
+            started: false,
+            kingable: false
         }
     },
     doMainBtn: function(btn) {
@@ -53,9 +54,41 @@ Ext.define('Checkers.controller.Game', {
         }
     },
     commitTurn: function(turn) {
+        var i;
         console.log('TODO: Finish Turn');
         this.setPreviousTurn(Ext.clone(turn));
         turn.started = false;
+        /* Remove all the jumped pieces */
+        for (i = 0; i < turn.removedPieces.length; i++) {
+            turn.removedPieces[i].set('occupiedBy', 'none');
+            turn.removedPieces[i].set('pieceType', 'none');
+        }
+
+        /* Set the last moved square to be the piece we moved */
+        turn.moves[0].set('occupiedBy', turn.piece.get('occupiedBy'));
+        turn.moves[0].set('pieceType', turn.piece.get('pieceType'));
+
+        if (turn.kingable) {
+            turn.moves[0].set('pieceType', 'King');
+        }
+
+        /* Clear the square of the original piece */
+        turn.piece.set('occupiedBy', 'none');
+        turn.piece.set('pieceType', 'none');
+
+        i = { black: 0, red: 0, none: 0};
+        this.getBoard().getStore().each(function(square) {
+            i[square.get('occupiedBy')]++;
+        });
+        if (i.black == 0) {
+            Ext.Msg.alert("Game Over!", "Red has won the game!");
+            turn.started = false;
+        } else if (i.red == 0) {
+            Ext.Msg.alert("Game Over!", "Black has won the game!");
+            turn.started = false;
+        }
+
+        
         this.setCurrentTurn(turn);
         this.clearTurn();
     },
@@ -73,6 +106,7 @@ Ext.define('Checkers.controller.Game', {
         turn.removedPieces = [];
         turn.endOfTurn = false;
         turn.hasJumped = false;
+        turn.kingable = false;
         this.setCurrentTurn(turn);
         this.getBoard().select([], false, true);
         this.clearDecorations();
@@ -108,6 +142,13 @@ Ext.define('Checkers.controller.Game', {
             return true;
         } else if (this.isLegalMove(turn.moves[0], record)) {
             turn.moves.unshift(record);
+            
+            if (this.isKingable(record)) {
+                turn.kingable = true;
+                this.setEndOfTurn();
+                Ext.Msg.alert("King me!", "Landing here would cause you to be kinged and end your turn.");
+            }
+
             this.setCurrentTurn(turn);
 
             /* Now we need to decorate our board with arrows and such */
@@ -116,6 +157,19 @@ Ext.define('Checkers.controller.Game', {
         } else {
             return false;
         }
+    },
+    isKingable: function(to) {
+        var turn = this.getCurrentTurn(),
+            toID;
+        if (turn.piece.get('pieceType') == 'Piece') {
+            toID = to.get('squareID').split(''); // This makes the letter element 0, and the number element 1.
+            if (turn.player == 'red' && toID[1] == 1) {
+                return true;
+            } else if (turn.player == 'black' && toID[1] == 8) {
+                return true;
+            }
+        }
+        return false;
     },
     isLegalMove: function (from, to) {
         var turn = this.getCurrentTurn(),
