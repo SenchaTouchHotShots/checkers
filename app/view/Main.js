@@ -7,6 +7,7 @@ Ext.define('Checkers.view.Main', {
         'Ext.dataview.DataView'
     ],
     config: {
+        scrollable: false,
         items: [
             {
                 xtype: 'dataview',
@@ -16,6 +17,7 @@ Ext.define('Checkers.view.Main', {
                 store: 'BoardStore',
                 height: 619,
                 width: 619,
+                scrollable: false,
                 cls: 'board',
                 margin: 5,
                 padding: 5,
