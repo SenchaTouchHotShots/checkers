@@ -45,12 +45,14 @@ Ext.define('Checkers.controller.Game', {
             this.clearTurn();
             Ext.Msg.alert("Ready to play!", "It is "+turn.player[0].toUpperCase() + turn.player.slice(1)+"'s turn!");
         } else {
+            if (turn.moves.length > 1) {
             this.commitTurn(turn);
             turn.player = (turn.player == 'red')?'black':'red';
             this.setCurrentTurn(turn);
             this.clearTurn();
             btn.setText('Start Turn');
             this.getAltBtn().setText('Show Previous');
+                }
         }
     },
     commitTurn: function(turn) {
