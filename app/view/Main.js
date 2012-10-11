@@ -20,6 +20,20 @@ Ext.define('Checkers.view.Main', {
                 margin: 5,
                 padding: 5,
                 mode: 'MULTI'
+            },
+            {
+                xtype : 'toolbar',
+                docked: 'bottom',
+                items: [
+                    {
+                        xtype: 'spacer'
+                    },
+                    { text: 'Start Turn', action: 'mainButton' },
+                    { text: 'Show Previous', action: 'altButton' },
+                    {
+                    xtype: 'spacer'
+                    }
+                ]
             }
         ]
     }

@@ -4,15 +4,25 @@ Ext.define('Checkers.controller.Game', {
         control: {
             board: {
                 select: 'doSelect'
+            },
+            mainBtn: {
+                tap: 'doMainBtn'
+            },
+            altBtn: {
+                tap: 'doAltBtn'
             }
         },
         refs: {
-            board: 'main dataview'
+            board: 'main dataview',
+            mainBtn: 'button[action="mainButton"]',
+            altBtn: 'button[action="altButton"]'
         },
         /* These next two are custom variables that we use. */
         previousTurn: {
             player: null,
-            moves: []
+            piece: null,
+            moves: [],
+            removedPieces: []
         },
         currentTurn: {
             player: 'red',
@@ -20,15 +30,65 @@ Ext.define('Checkers.controller.Game', {
             moves: [],
             removedPieces: [],
             endOfTurn: false,
-            hasJumped: false
+            hasJumped: false,
+            started: false
         }
+    },
+    doMainBtn: function(btn) {
+        var turn = this.getCurrentTurn();
+        if (btn.getText() == 'Start Turn') {
+            btn.setText('Finish Turn!');
+            this.getAltBtn().setText('Clear Moves');
+            turn.started = true;
+            this.setCurrentTurn(turn);
+            this.clearTurn();
+            Ext.Msg.alert("Ready to play!", "It is "+turn.player[0].toUpperCase() + turn.player.slice(1)+"'s turn!");
+        } else {
+            this.commitTurn(turn);
+            turn.player = (turn.player == 'red')?'black':'red';
+            this.setCurrentTurn(turn);
+            this.clearTurn();
+            btn.setText('Start Turn');
+            this.getAltBtn().setText('Show Previous');
+        }
+    },
+    commitTurn: function(turn) {
+        console.log('TODO: Finish Turn');
+        this.setPreviousTurn(Ext.clone(turn));
+        turn.started = false;
+        this.setCurrentTurn(turn);
+        this.clearTurn();
+    },
+    doAltBtn: function(btn) {
+        if (btn.getText() == 'Show Previous') {
+            this.decoratePreviousTurn();
+        } else {
+            this.clearTurn();
+        }
+    },
+    clearTurn: function() {
+        var turn = this.getCurrentTurn();
+        turn.piece = null;
+        turn.moves = [];
+        turn.removedPieces = [];
+        turn.endOfTurn = false;
+        turn.hasJumped = false;
+        this.setCurrentTurn(turn);
+        this.getBoard().select([], false, true);
+        this.clearDecorations();
+    },
+    clearDecorations: function() {
+        var store = this.getBoard().getStore();
+        store.each(function(square) {
+            square.set('decoration', '');
+        });
     },
     doSelect: function (view, record) {
         var turn = this.getCurrentTurn();
         /* Select is preventable. If the move is illegal, we will return false to prevent the selection. If it's a legal move, we will return true */
 
-        /* If the turn has been marked as over, disallow selection */
-        if (turn.endOfTurn) {
+        /* If the turn has been marked as over or hasn't started yet, disallow selection */
+        if (turn.endOfTurn || !turn.started) {
             return false;
         }
         
@@ -201,6 +261,11 @@ Ext.define('Checkers.controller.Game', {
     },
     decoratePreviousTurn: function() {
         var turn = this.getPreviousTurn();
+        if (turn.player == null && turn.piece == null) {
+            Ext.Msg.alert('Game not started', 'There is no previous turn to show');
+            return false;
+        }
+        this.getBoard().select(turn.moves, false, true);
         return this.decorateTurn(turn);
     },
     decorateTurn: function(turn) {
