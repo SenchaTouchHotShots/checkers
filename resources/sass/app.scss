@@ -45,12 +45,12 @@
 }
 
 .board {
-  background: url("/resources/images/board.jpg");
+  background: url("../images/board.jpg");
 }
 
 .up_left:before {
     content: '';
-    background: url("/resources/images/up_left.png");
+    background: url("../images/up_left.png");
     height: 32px;
     width: 32px;
     margin: 0;
@@ -63,7 +63,7 @@
 
 .up_right:before {
     content: '';
-    background: url("/resources/images/up_right.png");
+    background: url("../images/up_right.png");
     height: 32px;
     width: 32px;
     margin: 0;
@@ -76,7 +76,7 @@
 
 .down_left:before {
     content: '';
-    background: url("/resources/images/down_left.png");
+    background: url("../images/down_left.png");
     height: 32px;
     width: 32px;
     margin: 0;
@@ -88,7 +88,7 @@
 }
 .down_right:before {
     content: '';
-    background: url("/resources/images/down_right.png");
+    background: url("../images/down_right.png");
     height: 32px;
     width: 32px;
     margin: 0;
@@ -100,7 +100,7 @@
 }
 .removed:after {
     content: '';
-    background: url("/resources/images/removed.png");
+    background: url("../images/removed.png");
     height: 72px;
     width: 72px;
     position:absolute;
