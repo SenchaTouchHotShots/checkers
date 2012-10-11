@@ -1,5 +1,6 @@
 tmp
 build
+resources/sass/.sass-cache
 
 #testing
 tmp.php
