@@ -12,6 +12,7 @@ Ext.application({
         'Ext.MessageBox'
     ],
 
+    controllers: ['Game'],
     views: ['Main'],
     stores: ['BoardStore'],
     models: ['Square'],
