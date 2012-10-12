@@ -3,7 +3,8 @@ Ext.define('Checkers.controller.Game', {
     config: {
         control: {
             board: {
-                select: 'doSelect'
+                select: 'doSelect',
+                deselect: 'doDeselect'
             },
             mainBtn: {
                 tap: 'doMainBtn'
@@ -34,6 +35,14 @@ Ext.define('Checkers.controller.Game', {
             started: false,
             kingable: false
         }
+    },
+    doDeselect: function() {
+        Ext.Msg.confirm('Clear Turn?', 'Do you want to clear your turn?', function(btnID) {
+            if (btnID == 'yes') {
+                this.clearTurn();
+            }
+        }, this);
+        return false;
     },
     doMainBtn: function(btn) {
         var turn = this.getCurrentTurn();
@@ -110,7 +119,7 @@ Ext.define('Checkers.controller.Game', {
         turn.hasJumped = false;
         turn.kingable = false;
         this.setCurrentTurn(turn);
-        this.getBoard().select([], false, true);
+        this.getBoard().deselectAll(true);
         this.clearDecorations();
     },
     clearDecorations: function() {
