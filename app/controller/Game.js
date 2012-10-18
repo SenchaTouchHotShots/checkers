@@ -66,7 +66,6 @@ Ext.define('Checkers.controller.Game', {
     },
     commitTurn: function(turn) {
         var i;
-        console.log('TODO: Finish Turn');
         this.setPreviousTurn(Ext.clone(turn));
         turn.started = false;
         /* Remove all the jumped pieces */
@@ -134,19 +133,23 @@ Ext.define('Checkers.controller.Game', {
 
         /* If the turn has been marked as over or hasn't started yet, disallow selection */
         if (turn.endOfTurn || !turn.started) {
+            console.log('Invalid Move: Turn has not been started');
             return false;
         }
         
         /* Next we disallow selecting any light square. Only dark squares have pieces on them */
         if (record.get('background') == 'light') {
+            console.log('Invalid Move: Light square selected');
             return false;
         }
 
         /* Now, if we're at the start of the move (no moves made) we have to be a piece owned by the current player */
         if (turn.moves.length == 0 && record.get('occupiedBy') != turn.player) {
+            console.log('Invalid Move: Player selected an invalid piece: '+record.get('occupiedBy'));
             return false;
         } else if (turn.moves.length == 0) {
             /* We've started our turn. We store moves in reverse order. The first move in the list is the last move made. */
+            console.log('Valid Move: The user selected a piece');
             turn.moves.unshift(record);
             turn.piece = record;
             this.setCurrentTurn(turn);
@@ -197,6 +200,7 @@ Ext.define('Checkers.controller.Game', {
         
         /* First, is the destination empty? */
         if (to.get('occupiedBy') != 'none') {
+            console.log('Invalid Move: Player attempted to move to an occupied square');
             return false;
         }
 
@@ -274,6 +278,8 @@ Ext.define('Checkers.controller.Game', {
                     turn.hasJumped = true;
                     this.setCurrentTurn(turn);
                     return true;
+                } else {
+                    console.log('Invalid Move: Intermediate square is unoccupied');
                 }
             } else if (turn.piece.get('occupiedBy') == 'red') {
                 if (toID[1] < fromID[1]) {
@@ -284,6 +290,8 @@ Ext.define('Checkers.controller.Game', {
                         turn.hasJumped = true;
                         this.setCurrentTurn(turn);
                         return true;
+                    } else {
+                        console.log('Invalid Move: You cannot jump a piece of type: '+intermediate.get('occupiedBy'));
                     }
                 }
             } else {
@@ -295,6 +303,8 @@ Ext.define('Checkers.controller.Game', {
                         turn.hasJumped = true;
                         this.setCurrentTurn(turn);
                         return true;
+                    } else {
+                        console.log('Invalid Move: You cannot jump a piece of type: '+intermediate.get('occupiedBy'));
                     }
                 }
             }
@@ -302,6 +312,7 @@ Ext.define('Checkers.controller.Game', {
 
 
         return false;
+        console.log('Invalid Move: square is too far away or otherwise invalid.');
     },
     nextLetter: function(letter, distance) {
         distance = distance || 1;
@@ -346,6 +357,8 @@ Ext.define('Checkers.controller.Game', {
             } else {
                 cls = 'up';
             }
+            console.log(fromID[0] < toID[0]);
+            console.log(fromID[0], toID[0]);
             if (fromID[0] < toID[0]) {
                 cls += '_right';
             } else {
